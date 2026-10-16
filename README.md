@@ -9,8 +9,12 @@ Jo utilitzo aquesta eina principalment per generar gràfics amb Excalidraw (plot
 
 <img width="1454" height="794" alt="notioondark" src="https://github.com/user-attachments/assets/ea74f061-fb10-4b74-8df1-a6a3d28069a5" />
 
-  
 </details>
+
+Una altra utilitat que té dins de Notion és poder generar icones de pàgines que canvien de color automàticament.
+
+## Enllaç a la web
+[https://mapaor.github.io/svg-theme-converter](https://mapaor.github.io/svg-theme-converter)
 
 ## Llicència
 MIT
