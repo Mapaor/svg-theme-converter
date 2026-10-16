@@ -3,5 +3,14 @@ Una eina senzilla principalment enfocada en fer un SVG "dark mode compatible", �
 
 Jo utilitzo aquesta eina principalment per generar gràfics amb Excalidraw (plots senzills d'apunts de classe) i després posar-los al Notion, i que es vegin bé tant si són en mode fosc com en mode clar. Per exemple que si en mode clar els eixos d'un plot són negres en mode fosc es facin blancs.
 
+<details>
+
+  <summary>GIF d'exemple a Notion</summary>
+
+<img width="1454" height="794" alt="notioondark" src="https://github.com/user-attachments/assets/ea74f061-fb10-4b74-8df1-a6a3d28069a5" />
+
+  
+</details>
+
 ## Llicència
 MIT
