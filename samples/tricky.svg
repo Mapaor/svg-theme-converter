@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 240 140" width="240" height="140" onload="alert(1)">
+<style>:root{--accent:#2f9e44}.a{fill:#2f9e44;stroke:var(--accent)}.b{fill:#FFF}</style>
+<script>alert('x')</script>
+<defs><linearGradient id="g"><stop offset="0" stop-color="#e03131"/><stop offset="1" stop-color="hsla(210,60%,50%,.5)"/></linearGradient>
+<pattern id="p" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="4" height="4" fill="#000000"/></pattern></defs>
+<rect class="a" x="5" y="5" width="60" height="50"/><rect class="b" x="75" y="5" width="60" height="50" stroke="#fff"/>
+<rect x="145" y="5" width="60" height="50" fill="url(#g)"/><rect x="5" y="70" width="60" height="50" fill="url(#p)"/>
+<rect x="75" y="70" width="60" height="50" style="fill:rgba(0,0,0,.5);stroke:black"/>
+<image xlink:href="https://example.com/x.png" x="145" y="70" width="40" height="40"/>
+<rect x="190" y="90" width="40" height="40" fill="var(--accent)" onclick="alert(2)"/>
+</svg>
