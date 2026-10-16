@@ -5,7 +5,16 @@
 <header>
   <div id="drop" tabindex="0" role="button" aria-label="Importa un SVG: arrossega'l aquí, fes clic o enganxa'l amb Ctrl+V"><span aria-hidden="true">⇪</span><span id="fileName">Arrossega un SVG, fes clic per triar-lo o enganxa'l (Ctrl+V)</span></div>
   <input id="file" type="file" accept=".svg,image/svg+xml" hidden>
-  <select id="samples" aria-label="Carrega un exemple"><option value="">Exemples…</option><option>simple.svg</option><option>excalidraw-plot.svg</option><option>excalidraw-math.svg</option><option>tricky.svg</option></select>
+  <label class="samples">
+    <span class="samples-k">Exemples</span>
+    <select id="samples" aria-label="Carrega un exemple">
+      <option value="">Tria un fitxer…</option>
+      <option value="simple.svg">Simple</option>
+      <option value="excalidraw-plot.svg">Gràfic Excalidraw</option>
+      <option value="excalidraw-math.svg">Matemàtiques Excalidraw</option>
+      <option value="tricky.svg">Casos difícils</option>
+    </select>
+  </label>
 </header>
 <nav id="tabs" aria-label="Seccions">
   <button data-tab="0" aria-pressed="true">Editor</button><button data-tab="1" aria-pressed="false">Colors</button><button data-tab="2" aria-pressed="false">Resultat</button>

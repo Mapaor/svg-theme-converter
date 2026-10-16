@@ -13,6 +13,8 @@ function load(text, name) {
   Object.assign(st, { name, doc: null, colors: [], notes: [], san: [], out: '' });
   src.value = text; gutter(); $('#fileName').textContent = name + ' — clic o arrossega per substituir';
   $('#out').value = ''; setImg(null); previewSrc(null); renderColors(); renderWarns(); sync(); showErr(null);
+  const samples = $('#samples');
+  samples.value = [...samples.options].some(o => o.value === name) ? name : '';
   reparse(false);
 }
 /** Reanalitza el text de l'editor. Si és invàlid, es manté l'últim resultat vàlid. keep: conserva les eleccions de l'usuari per clau de color. */
@@ -126,8 +128,8 @@ document.addEventListener('paste', e => {
   e.preventDefault();
 });
 $('#samples').onchange = async e => {
-  const n = e.target.value; e.target.value = ''; if (!n) return;
-  try { const r = await fetch('samples/' + n); if (!r.ok) throw 0; load(await r.text(), n); } catch { showErr("No s'ha pogut carregar l'exemple (cal servir els fitxers amb un servidor HTTP)."); }
+  const n = e.target.value; if (!n) return;
+  try { const r = await fetch('samples/' + n); if (!r.ok) throw 0; load(await r.text(), n); } catch { e.target.value = ''; showErr("No s'ha pogut carregar l'exemple (cal servir els fitxers amb un servidor HTTP)."); }
 };
 
 // Pestanyes (pantalles estretes)

@@ -42,16 +42,18 @@ body {
 header {
     display: flex;
     gap: 8px;
-    align-items: center;
+    align-items: stretch;
     padding: 8px;
     border-bottom: 1px solid var(--bd);
 }
 #drop {
     flex: 1;
     display: flex;
+    align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px;
+    min-height: 72px;
+    padding: 22px 12px;
     border: 2px dashed var(--bd);
     border-radius: 8px;
     cursor: pointer;
@@ -61,8 +63,48 @@ header {
     border-color: var(--ac);
     background: var(--pn);
 }
+.samples {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    min-width: 220px;
+    padding: 10px 12px;
+    background: var(--pn);
+    border: 1px solid var(--bd);
+    border-radius: 8px;
+}
+.samples-k {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mut);
+}
+#samples {
+    appearance: none;
+    width: 100%;
+    font: inherit;
+    color: var(--fg);
+    background-color: var(--bg);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--mut) 50%),
+        linear-gradient(135deg, var(--mut) 50%, transparent 50%);
+    background-position:
+        calc(100% - 16px) calc(50% - 2px),
+        calc(100% - 10px) calc(50% - 2px);
+    background-size: 6px 6px;
+    background-repeat: no-repeat;
+    border: 1px solid var(--bd);
+    border-radius: 6px;
+    padding: 8px 32px 8px 10px;
+    cursor: pointer;
+}
+#samples:hover,
+#samples:focus-visible {
+    border-color: var(--ac);
+}
 button,
-select,
 input[type="text"] {
     font: inherit;
     color: inherit;
@@ -261,6 +303,15 @@ input[type="color"] {
     display: none !important;
 }
 
+@media (max-width: 640px) {
+    header {
+        flex-wrap: wrap;
+    }
+    .samples {
+        width: 100%;
+        min-width: 0;
+    }
+}
 @media (max-width: 1000px) {
     #tabs {
         display: flex;
