@@ -150,6 +150,23 @@ section {
 .bar strong {
     margin-right: auto;
 }
+.bar-end {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+button.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+button.icon svg {
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+}
 #dirty,
 #msg {
     color: var(--wa);
