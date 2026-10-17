@@ -74,7 +74,7 @@ function preview() {
 $('#img').onerror = () => showErr("El navegador no ha pogut renderitzar l'SVG generat.");
 function setView(v) {
   st.view = v; $('#vCode').setAttribute('aria-pressed', v === 'code'); $('#vImg').setAttribute('aria-pressed', v === 'img');
-  $('#out').hidden = v !== 'code'; $('#prev').hidden = $('#themeSeg').hidden = v !== 'img'; if (v === 'img') preview();
+  $('#out').hidden = v !== 'code'; $('#prev').hidden = v !== 'img'; showThemeSegs(); if (v === 'img') preview();
 }
 // Vista de l'original (columna esquerra)
 let srcUrl = null;
@@ -86,14 +86,17 @@ function previewSrc(text) {
 }
 function setSrcView(v) {
   st.srcView = v; $('#sCode').setAttribute('aria-pressed', v === 'code'); $('#sImg').setAttribute('aria-pressed', v === 'img');
-  $('.ed').hidden = v !== 'code'; $('#prevSrc').hidden = v !== 'img';
+  $('.ed').hidden = v !== 'code'; $('#prevSrc').hidden = v !== 'img'; showThemeSegs();
 }
 $('#sCode').onclick = () => setSrcView('code'); $('#sImg').onclick = () => setSrcView('img');
 $('#imgSrc').onerror = () => showErr("El navegador no ha pogut renderitzar l'SVG original.");
+const themeSegs = () => document.querySelectorAll('.themeSeg');
+const showThemeSegs = () => themeSegs().forEach(el => { el.hidden = el.closest('#p-out') ? st.view !== 'img' : st.srcView !== 'img'; });
 const applyTheme = () => { $('#prev').dataset.theme = $('#prevSrc').dataset.theme = st.theme; };
+const syncTheme = () => themeSegs().forEach(el => el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === st.theme)));
+const setTheme = t => { st.theme = t; syncTheme(); applyTheme(); if (st.view === 'img') preview(); };
+themeSegs().forEach(el => { el.onclick = e => { if (e.target.dataset.t) setTheme(e.target.dataset.t); }; });
 $('#vCode').onclick = () => setView('code'); $('#vImg').onclick = () => setView('img');
-$('#themeSeg').onclick = e => { if (e.target.dataset.t) { st.theme = e.target.dataset.t; sync2(); applyTheme(); preview(); } };
-const sync2 = () => $('#themeSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === st.theme));
 
 $('#copy').onclick = async () => { try { await navigator.clipboard.writeText(st.out); msg('Copiat'); } catch { showErr("No s'ha pogut accedir al porta-retalls. Selecciona el codi i copia'l manualment."); $('#out').select(); } };
 $('#dl').onclick = () => {
@@ -134,4 +137,4 @@ $('#samples').onchange = async e => {
 
 // Pestanyes (pantalles estretes)
 $('#tabs').onclick = e => { const t = e.target.dataset.tab; if (!t) return; $('main').dataset.tab = t; $('#tabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === t)); };
-gutter(); sync2(); applyTheme(); setView('img'); setSrcView('img');
+gutter(); syncTheme(); applyTheme(); setView('img'); setSrcView('img');
