@@ -55,6 +55,7 @@ $('#list').addEventListener('input', e => {
   else c[f] = t.value;
   update();
 });
+$('#invert').onclick = () => { st.colors.forEach(c => { const t = c.light; c.light = c.dark; c.dark = t; }); renderColors(); update(); };
 $('#reset').onclick = () => { st.colors.forEach(c => Object.assign(c, c.sug, { enabled: true })); renderColors(); update(); };
 
 const renderWarns = () => fill($('#warns'), [...st.san, ...st.notes]);
