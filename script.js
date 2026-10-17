@@ -1,5 +1,6 @@
 // Interfície i estat. La lògica SVG és a converter.js i colors.js.
 import { parseSvg, sanitize, analyze, generate, pinTheme } from './converter.js';
+import { highlight } from './highlight.js';
 const $ = s => document.querySelector(s), src = $('#src');
 const st = { name: 'image.svg', doc: null, colors: [], notes: [], san: [], out: '', url: null, view: 'img', srcView: 'img', warnOpen: false, theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light' };
 
@@ -16,11 +17,23 @@ const showErr = m => { $('#err').textContent = m || ''; $('#err').hidden = !m; }
 const msg = t => { $('#msg').textContent = t; setTimeout(() => ($('#msg').textContent = ''), 2500); };
 const gutter = () => { $('#gutter').textContent = Array.from({ length: src.value.split('\n').length }, (_, i) => i + 1).join('\n'); };
 
+/* Codi acolorit: el textarea va a sobre amb el text transparent i la capa .hl del darrere pinta
+   el codi. El desplaçament es fa amb un transform, així no depèn de l'alçada de scroll del textarea. */
+const hlSrc = $('#hlSrc'), hlOut = $('#hlOut');
+const syncScroll = (layer, ta) => { layer.style.transform = `translate(${-ta.scrollLeft}px, ${-ta.scrollTop}px)`; };
+const paint = (layer, ta) => {
+  try {
+    const html = highlight(ta.value);
+    if (layer.innerHTML !== html) layer.innerHTML = html;
+  } catch { layer.textContent = ta.value; } // si el tokenitzador fallés, el codi es veu igualment (pla)
+  syncScroll(layer, ta);
+};
+
 /** Càrrega d'un SVG nou: reinicia TOT l'estat dependent del document anterior. */
 function load(text, name) {
   Object.assign(st, { name, doc: null, colors: [], notes: [], san: [], out: '' });
-  src.value = text; gutter(); $('#fileName').textContent = name + ' — clic o arrossega per substituir';
-  $('#out').value = ''; setImg(null); previewSrc(null); renderColors(); renderWarns(); sync(); showErr(null);
+  src.value = text; gutter(); paint(hlSrc, src); $('#fileName').textContent = name + ' — clic o arrossega per substituir';
+  $('#out').value = ''; paint(hlOut, $('#out')); setImg(null); previewSrc(null); renderColors(); renderWarns(); sync(); showErr(null);
   const samples = $('#samples');
   samples.value = [...samples.options].some(o => o.value === name) ? name : '';
   reparse(false);
@@ -90,7 +103,7 @@ const sync = () => { $('#copy').disabled = $('#dl').disabled = !st.out; };
 function update() {
   if (!st.doc) return;
   try { st.out = generate(st.doc, st.colors); } catch (e) { showErr('Error en generar el SVG: ' + e.message); return; }
-  $('#out').value = st.out; renderWarns(); sync(); if (st.view === 'img') preview();
+  $('#out').value = st.out; paint(hlOut, $('#out')); renderWarns(); sync(); if (st.view === 'img') preview();
 }
 function setImg(url) { const old = st.url; st.url = url; url ? ($('#img').src = url) : $('#img').removeAttribute('src'); if (old) URL.revokeObjectURL(old); }
 function preview() {
@@ -101,7 +114,7 @@ function preview() {
 $('#img').onerror = () => showErr("El navegador no ha pogut renderitzar l'SVG generat.");
 function setView(v) {
   st.view = v; $('#vCode').setAttribute('aria-pressed', v === 'code'); $('#vImg').setAttribute('aria-pressed', v === 'img');
-  $('#out').hidden = v !== 'code'; $('#prev').hidden = v !== 'img'; showThemeSegs(); if (v === 'img') preview();
+  $('#outCode').hidden = v !== 'code'; $('#prev').hidden = v !== 'img'; if (v === 'img') preview();
 }
 // Vista de l'original (columna esquerra)
 let srcUrl = null, srcText = null;
@@ -120,13 +133,12 @@ function previewSrc(text) {
 }
 function setSrcView(v) {
   st.srcView = v; $('#sCode').setAttribute('aria-pressed', v === 'code'); $('#sImg').setAttribute('aria-pressed', v === 'img');
-  $('.ed').hidden = v !== 'code'; $('#prevSrc').hidden = v !== 'img'; showThemeSegs();
+  $('.ed').hidden = v !== 'code'; $('#prevSrc').hidden = v !== 'img';
   if (v === 'img') previewSrc(srcText); // el tema pot haver canviat mentre es veia el codi
 }
 $('#sCode').onclick = () => setSrcView('code'); $('#sImg').onclick = () => setSrcView('img');
 $('#imgSrc').onerror = () => showErr("El navegador no ha pogut renderitzar l'SVG original.");
-const themeSegs = () => document.querySelectorAll('.themeSeg');
-const showThemeSegs = () => themeSegs().forEach(el => { el.hidden = el.closest('#p-out') ? st.view !== 'img' : st.srcView !== 'img'; });
+const themeSegs = () => document.querySelectorAll('.themeSeg'); // sempre visibles (també en mode codi)
 const applyTheme = () => { $('#prev').dataset.theme = $('#prevSrc').dataset.theme = st.theme; };
 const syncTheme = () => themeSegs().forEach(el => el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === st.theme)));
 const setTheme = t => { st.theme = t; syncTheme(); applyTheme(); if (st.view === 'img') preview(); if (st.srcView === 'img') previewSrc(srcText); };
@@ -140,8 +152,9 @@ $('#dl').onclick = () => {
 };
 
 // Editor
-src.addEventListener('input', () => { gutter(); $('#dirty').hidden = false; });
-src.addEventListener('scroll', () => { $('#gutter').scrollTop = src.scrollTop; });
+src.addEventListener('input', () => { gutter(); paint(hlSrc, src); $('#dirty').hidden = false; });
+src.addEventListener('scroll', () => { $('#gutter').scrollTop = src.scrollTop; syncScroll(hlSrc, src); });
+$('#out').addEventListener('scroll', () => syncScroll(hlOut, $('#out')));
 src.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') reparse(true); });
 $('#reparse').onclick = () => reparse(true);
 

@@ -24,10 +24,10 @@
   <section id="p-editor" aria-label="Editor SVG">
       <div class="bar">
         <div class="seg" role="group" aria-label="Vista de l'original"><button id="sCode" aria-pressed="false">Codi</button><button id="sImg" aria-pressed="true">Imatge</button></div>
-        <div class="seg themeSeg" role="group" aria-label="Tema de la previsualització" hidden><button data-t="light">☀ Clar</button><button data-t="dark">☾ Fosc</button></div>
+        <div class="seg themeSeg" role="group" aria-label="Tema de la previsualització"><button data-t="light">☀ Clar</button><button data-t="dark">☾ Fosc</button></div>
         <span id="dirty" hidden>editat, sense analitzar</span><button id="reparse" title="Ctrl+Enter">Reanalitza</button>
       </div>
-    <div class="ed"><pre id="gutter" aria-hidden="true">1</pre><textarea id="src" spellcheck="false" wrap="off" aria-label="Codi SVG original"></textarea></div>
+    <div class="ed"><pre id="gutter" aria-hidden="true">1</pre><div class="code"><pre class="hl" aria-hidden="true"><code id="hlSrc"></code></pre><textarea id="src" spellcheck="false" wrap="off" aria-label="Codi SVG original"></textarea></div></div>
     <div id="prevSrc" class="prev" hidden><img id="imgSrc" alt="Previsualització de l'SVG original"></div>
     <div id="err" role="alert" hidden></div>
   </section>
@@ -39,7 +39,7 @@
   <section id="p-out" aria-label="Resultat">
     <div class="bar">
       <div class="seg" role="group" aria-label="Vista"><button id="vCode" aria-pressed="true">Codi</button><button id="vImg" aria-pressed="false">Imatge</button></div>
-      <div class="seg themeSeg" role="group" aria-label="Tema de la previsualització" hidden><button data-t="light">☀ Clar</button><button data-t="dark">☾ Fosc</button></div>
+      <div class="seg themeSeg" role="group" aria-label="Tema de la previsualització"><button data-t="light">☀ Clar</button><button data-t="dark">☾ Fosc</button></div>
       <div class="bar-end">
         <span id="msg" role="status"></span>
         <button id="copy" class="icon" disabled aria-label="Copia" title="Copia">
@@ -50,7 +50,7 @@
         </button>
       </div>
     </div>
-    <textarea id="out" readonly spellcheck="false" wrap="off" aria-label="SVG generat"></textarea>
+    <div class="code" id="outCode"><pre class="hl" aria-hidden="true"><code id="hlOut"></code></pre><textarea id="out" readonly spellcheck="false" wrap="off" aria-label="SVG generat"></textarea></div>
     <div id="prev" class="prev" hidden><img id="img" alt="Previsualització del SVG generat"></div>
   </section>
 </main>

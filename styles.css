@@ -7,6 +7,10 @@
     --ac: #0969da;
     --er: #cf222e;
     --wa: #9a6700;
+    --hl-tag: #8250df;
+    --hl-attr: #953800;
+    --hl-val: #116329;
+    --hl-com: #6e7781;
     color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -19,6 +23,10 @@
         --ac: #58a6ff;
         --er: #ff7b72;
         --wa: #d29922;
+        --hl-tag: #d2a8ff;
+        --hl-attr: #ffa657;
+        --hl-val: #7ee787;
+        --hl-com: #8b949e;
     }
 }
 * {
@@ -197,7 +205,8 @@ button.icon svg {
 }
 #gutter,
 #src,
-#out {
+#out,
+.hl {
     font:
         12px/1.5 ui-monospace,
         Menlo,
@@ -219,12 +228,55 @@ button.icon svg {
     user-select: none;
     min-width: 3.2em;
 }
+/* Codi acolorit: el textarea (a sobre) té el text transparent i la capa .hl del darrere és la que
+   pinta el codi. Les dues caixes comparteixen font i padding, així que el text coincideix. */
+.code {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+}
+.code > * {
+    position: absolute;
+    inset: 0;
+    width: auto;
+}
 #src,
 #out {
-    flex: 1;
-    width: 100%;
-    min-height: 0;
     overflow: auto;
+    background: transparent;
+    color: transparent;
+    caret-color: var(--fg);
+}
+/* La selecció ha de ser translúcida: si no, taparia el text de la capa del darrere. */
+#src::selection,
+#out::selection {
+    background: color-mix(in srgb, var(--ac) 30%, transparent);
+}
+.hl {
+    overflow: hidden;
+    pointer-events: none; /* els clics i el cursor han d'anar al textarea */
+}
+.hl > code {
+    display: block;
+    font: inherit; /* el navegador posa font-family: monospace a <code>: cal heretar la del textarea */
+}
+.hl .pn {
+    color: var(--mut);
+}
+.hl .tn {
+    color: var(--hl-tag);
+}
+.hl .an {
+    color: var(--hl-attr);
+}
+.hl .av {
+    color: var(--hl-val);
+}
+.hl .cm,
+.hl .cd {
+    color: var(--hl-com);
+    font-style: italic;
 }
 /* El contorn global (:focus-visible) va 1px per fora de la caixa i el tallen les vores del panell,
    que ocupa tota la columna: amb un desplaçament negatiu es dibuixa a dins i es veu sencer. */

@@ -19,9 +19,9 @@ SVG Theme Converter Online: [https://mapaor.github.io/svg-theme-converter](https
 ## Roadmap
 Algunes coses que tinc pendents de millorar
 - [ ] Afegir més exmples
-- [ ] Millorar la UX dels warnings
-- [ ] Millorar la UI de l'editor quan està focus
-- [ ] Afegir highlighting al codi de l'editor i l'output
+- [X] Millorar la UX dels warnings
+- [X] Millorar la UI de l'editor quan està focus
+- [x] Afegir highlighting al codi de l'editor i l'output
 - [x] Fer una detecció de SVGs que ja tenen un mode fosc implementat (i fer que es mostrin els dos colors input a la columna central)
 
 ## Llicència
