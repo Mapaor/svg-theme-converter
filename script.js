@@ -58,7 +58,7 @@ $('#list').addEventListener('input', e => {
 $('#invert').onclick = () => { st.colors.forEach(c => { const t = c.light; c.light = c.dark; c.dark = t; }); renderColors(); update(); };
 $('#reset').onclick = () => { st.colors.forEach(c => Object.assign(c, c.sug, { enabled: true })); renderColors(); update(); };
 
-const renderWarns = () => fill($('#warns'), [...st.san, ...st.notes]);
+const renderWarns = () => { fill($('#warns'), [...st.san, ...st.notes]); $('#warnWrap').hidden = $('#warns').hidden; };
 const sync = () => { $('#copy').disabled = $('#dl').disabled = !st.out; };
 function update() {
   if (!st.doc) return;
