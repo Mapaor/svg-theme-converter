@@ -226,6 +226,13 @@ button.icon svg {
     min-height: 0;
     overflow: auto;
 }
+/* El contorn global (:focus-visible) va 1px per fora de la caixa i el tallen les vores del panell,
+   que ocupa tota la columna: amb un desplaçament negatiu es dibuixa a dins i es veu sencer. */
+#src:focus,
+#out:focus {
+    outline: 2px solid var(--ac);
+    outline-offset: -2px;
+}
 #err {
     padding: 6px 8px;
     border-top: 2px solid var(--er);
@@ -261,6 +268,9 @@ button.icon svg {
 }
 .warn-t:hover {
     background: var(--pn);
+}
+.warn-t:focus-visible {
+    outline-offset: -2px; /* toca les vores del panell: el contorn, a dins */
 }
 .warn {
     margin: 0;
