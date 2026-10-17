@@ -22,7 +22,7 @@ Algunes coses que tinc pendents de millorar
 - [ ] Millorar la UX dels warnings
 - [ ] Millorar la UI de l'editor quan està focus
 - [ ] Afegir highlighting al codi de l'editor i l'output
-- [ ] Fer una detecció de SVGs que ja tenen un mode fosc implementat (i fer que es mostrin els dos colors input a la columna central)
+- [x] Fer una detecció de SVGs que ja tenen un mode fosc implementat (i fer que es mostrin els dos colors input a la columna central)
 
 ## Llicència
 MIT

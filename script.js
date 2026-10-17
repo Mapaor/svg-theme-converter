@@ -1,5 +1,5 @@
 // Interfície i estat. La lògica SVG és a converter.js i colors.js.
-import { parseSvg, sanitize, analyze, generate } from './converter.js';
+import { parseSvg, sanitize, analyze, generate, pinTheme } from './converter.js';
 const $ = s => document.querySelector(s), src = $('#src');
 const st = { name: 'image.svg', doc: null, colors: [], notes: [], san: [], out: '', url: null, view: 'img', srcView: 'img', theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light' };
 
@@ -29,10 +29,11 @@ function reparse(keep) {
   let doc;
   try { doc = parseSvg(src.value); } catch (e) { showErr(e.message + (st.doc ? " Es mostra l'últim resultat vàlid." : '')); return; }
   const a = analyze(doc);
-  st.doc = doc; st.san = sanitize(doc);
-  st.doc = doc; st.san = sanitize(doc); previewSrc(src.value);
+  st.doc = doc; st.san = sanitize(doc); previewSrc(src.value); // un sol sanejament: una segona passada sobreescriuria st.san amb els avisos buits
   st.colors = a.colors.map(c => { const p = prev.get(c.key); return p ? { ...c, light: p.light, dark: p.dark, enabled: p.enabled } : c; });
   st.notes = [];
+  if (a.theme) st.notes.push(`Aquest SVG ja té tema clar/fosc (${a.theme.count} variable(s): ${a.theme.names.slice(0, 3).join(', ')}${a.theme.count > 3 ? '…' : ''}). Cada fila mostra els dos valors del fitxer i es conserven en exportar.`);
+  if (a.orphan) st.notes.push(`Hi ha ${a.orphan} referència(s) a variables de tema (--svg-color-…) sense bloc <style> que les declari; aquests colors no es podran aplicar.`);
   if (!a.colors.length) st.notes.push("No s'han detectat colors editables.");
   if (st.colors.some(c => c.isCurrent)) st.notes.push("currentColor es preserva (hereta la propietat color). La fila «currentColor» defineix el color base de l'SVG arrel" + (a.nested ? ", que hereten els SVG niats." : '.'));
   if (a.vars) st.notes.push(`${a.vars} referència(s) var() es preserven; només s'editen els colors definits directament (p. ex. --x: #fff).`);
@@ -44,7 +45,12 @@ function renderColors() {
     const li = document.createElement('li'); li.dataset.i = i;
     const nm = c.isCurrent ? 'currentColor' : c.hex + (c.alpha ? ` (${Math.round(parseInt(c.alpha, 16) / 2.55)}%)` : '');
     const pk = t => { const cl = t === 'light' ? 'clar' : 'fosc'; return `<span class="pk" title="Mode ${cl}">${t === 'light' ? I.sun : I.moon}<input type="color" data-f="${t}" value="${c[t]}" aria-label="Color mode ${cl} per a ${nm}"></span>`; };
-    li.innerHTML = `<input type="checkbox" data-f="enabled" ${c.enabled ? 'checked' : ''} aria-label="Aplica el tema a ${nm}"><span class="sw ${c.isCurrent ? 'cur' : ''}" style="background:${c.hex}${c.alpha}" title="${nm}: ${c.count} ús"></span><span class="to" aria-hidden="true">${I.arrow}</span>${pk('light')}${pk('dark')}`;
+    // Fila de tema: ja ve amb els dos valors del fitxer, així que la mostra es divideix en dues meitats (clar/fosc).
+    const aD = c.alphaD ?? c.alpha;
+    const sw = c.varName
+      ? { style: `background:linear-gradient(135deg,${c.light}${c.alpha} 50%,${c.dark}${aD} 50%)`, title: `${c.varName} · clar ${c.light}${c.alpha} · fosc ${c.dark}${aD} · ${c.count} ús` }
+      : { style: `background:${c.hex}${c.alpha}`, title: `${nm}: ${c.count} ús` };
+    li.innerHTML = `<input type="checkbox" data-f="enabled" ${c.enabled ? 'checked' : ''} aria-label="Aplica el tema a ${nm}"><span class="sw ${c.isCurrent ? 'cur' : ''}" style="${sw.style}" title="${sw.title}"></span><span class="to" aria-hidden="true">${I.arrow}</span>${pk('light')}${pk('dark')}`;
     return li;
   }));
 }
@@ -55,7 +61,13 @@ $('#list').addEventListener('input', e => {
   else c[f] = t.value;
   update();
 });
-$('#invert').onclick = () => { st.colors.forEach(c => { const t = c.light; c.light = c.dark; c.dark = t; }); renderColors(); update(); };
+$('#invert').onclick = () => {
+  st.colors.forEach(c => {
+    const t = c.light; c.light = c.dark; c.dark = t;
+    if ('alphaD' in c) { const a = c.alpha; c.alpha = c.alphaD; c.alphaD = a; } // l'alfa va amb el seu costat
+  });
+  renderColors(); update();
+};
 $('#reset').onclick = () => { st.colors.forEach(c => Object.assign(c, c.sug, { enabled: true })); renderColors(); update(); };
 
 const renderWarns = () => { fill($('#warns'), [...st.san, ...st.notes]); $('#warnWrap').hidden = $('#warns').hidden; };
@@ -77,16 +89,24 @@ function setView(v) {
   $('#out').hidden = v !== 'code'; $('#prev').hidden = v !== 'img'; showThemeSegs(); if (v === 'img') preview();
 }
 // Vista de l'original (columna esquerra)
-let srcUrl = null;
+let srcUrl = null, srcText = null;
+/** Un <img> no veu el prefers-color-scheme de la pàgina: per poder comparar clar/fosc es fixa el tema
+ *  triat als dos blocs del document original (només a la previsualització; l'editor no es toca). */
+const themedSrc = () => {
+  if (srcText == null) return null;
+  try { return pinTheme(parseSvg(srcText), st.theme) ?? srcText; } catch { return srcText; } // text invàlid: es mostra tal qual
+};
 function previewSrc(text) {
-  const old = srcUrl;
-  srcUrl = text == null ? null : URL.createObjectURL(new Blob([text], { type: 'image/svg+xml' }));
+  srcText = text;
+  const old = srcUrl, body = themedSrc();
+  srcUrl = body == null ? null : URL.createObjectURL(new Blob([body], { type: 'image/svg+xml' }));
   srcUrl ? ($('#imgSrc').src = srcUrl) : $('#imgSrc').removeAttribute('src');
   if (old) URL.revokeObjectURL(old);
 }
 function setSrcView(v) {
   st.srcView = v; $('#sCode').setAttribute('aria-pressed', v === 'code'); $('#sImg').setAttribute('aria-pressed', v === 'img');
   $('.ed').hidden = v !== 'code'; $('#prevSrc').hidden = v !== 'img'; showThemeSegs();
+  if (v === 'img') previewSrc(srcText); // el tema pot haver canviat mentre es veia el codi
 }
 $('#sCode').onclick = () => setSrcView('code'); $('#sImg').onclick = () => setSrcView('img');
 $('#imgSrc').onerror = () => showErr("El navegador no ha pogut renderitzar l'SVG original.");
@@ -94,7 +114,7 @@ const themeSegs = () => document.querySelectorAll('.themeSeg');
 const showThemeSegs = () => themeSegs().forEach(el => { el.hidden = el.closest('#p-out') ? st.view !== 'img' : st.srcView !== 'img'; });
 const applyTheme = () => { $('#prev').dataset.theme = $('#prevSrc').dataset.theme = st.theme; };
 const syncTheme = () => themeSegs().forEach(el => el.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === st.theme)));
-const setTheme = t => { st.theme = t; syncTheme(); applyTheme(); if (st.view === 'img') preview(); };
+const setTheme = t => { st.theme = t; syncTheme(); applyTheme(); if (st.view === 'img') preview(); if (st.srcView === 'img') previewSrc(srcText); };
 themeSegs().forEach(el => { el.onclick = e => { if (e.target.dataset.t) setTheme(e.target.dataset.t); }; });
 $('#vCode').onclick = () => setView('code'); $('#vImg').onclick = () => setView('img');
 
