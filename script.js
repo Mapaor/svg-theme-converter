@@ -1,13 +1,15 @@
 // Interfície i estat. La lògica SVG és a converter.js i colors.js.
 import { parseSvg, sanitize, analyze, generate, pinTheme } from './converter.js';
 const $ = s => document.querySelector(s), src = $('#src');
-const st = { name: 'image.svg', doc: null, colors: [], notes: [], san: [], out: '', url: null, view: 'img', srcView: 'img', theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light' };
+const st = { name: 'image.svg', doc: null, colors: [], notes: [], san: [], out: '', url: null, view: 'img', srcView: 'img', warnOpen: false, theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light' };
 
 const ico = (d) => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="i" aria-hidden="true">${d}</svg>`;
 const I = {
   sun: ico('<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>'),
   moon: ico('<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'),
   arrow: ico('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>'),
+  chevR: ico('<path d="m9 18 6-6-6-6"/>'), // lucide chevron-right (plegat)
+  chevD: ico('<path d="m6 9 6 6 6-6"/>'), // lucide chevron-down (desplegat)
 };
 const fill = (el, items) => { el.replaceChildren(...items.map(t => Object.assign(document.createElement('li'), { textContent: t }))); el.hidden = !items.length; };
 const showErr = m => { $('#err').textContent = m || ''; $('#err').hidden = !m; };
@@ -70,7 +72,20 @@ $('#invert').onclick = () => {
 };
 $('#reset').onclick = () => { st.colors.forEach(c => Object.assign(c, c.sug, { enabled: true })); renderColors(); update(); };
 
-const renderWarns = () => { fill($('#warns'), [...st.san, ...st.notes]); $('#warnWrap').hidden = $('#warns').hidden; };
+const warnItems = () => [...st.san, ...st.notes];
+/** L'avisos són un desplegable plegat per defecte; l'estat es conserva entre fitxers i edicions. */
+const syncWarnTgl = () => {
+  $('#warnTgl').setAttribute('aria-expanded', String(st.warnOpen));
+  $('#warnIco').innerHTML = st.warnOpen ? I.chevD : I.chevR;
+};
+const renderWarns = () => {
+  const items = warnItems();
+  fill($('#warns'), items);
+  $('#warnWrap').hidden = !items.length; // sense avisos, tot el bloc desapareix
+  $('#warns').hidden = !items.length || !st.warnOpen;
+  syncWarnTgl();
+};
+$('#warnTgl').onclick = () => { st.warnOpen = !st.warnOpen; renderWarns(); };
 const sync = () => { $('#copy').disabled = $('#dl').disabled = !st.out; };
 function update() {
   if (!st.doc) return;
@@ -157,4 +172,4 @@ $('#samples').onchange = async e => {
 
 // Pestanyes (pantalles estretes)
 $('#tabs').onclick = e => { const t = e.target.dataset.tab; if (!t) return; $('main').dataset.tab = t; $('#tabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === t)); };
-gutter(); syncTheme(); applyTheme(); setView('img'); setSrcView('img');
+gutter(); syncTheme(); applyTheme(); setView('img'); setSrcView('img'); syncWarnTgl();
