@@ -3,6 +3,12 @@ import { parseSvg, sanitize, analyze, generate } from './converter.js';
 const $ = s => document.querySelector(s), src = $('#src');
 const st = { name: 'image.svg', doc: null, colors: [], notes: [], san: [], out: '', url: null, view: 'img', srcView: 'img', theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light' };
 
+const ico = (d) => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="i" aria-hidden="true">${d}</svg>`;
+const I = {
+  sun: ico('<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>'),
+  moon: ico('<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'),
+  arrow: ico('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>'),
+};
 const fill = (el, items) => { el.replaceChildren(...items.map(t => Object.assign(document.createElement('li'), { textContent: t }))); el.hidden = !items.length; };
 const showErr = m => { $('#err').textContent = m || ''; $('#err').hidden = !m; };
 const msg = t => { $('#msg').textContent = t; setTimeout(() => ($('#msg').textContent = ''), 2500); };
@@ -37,8 +43,8 @@ function renderColors() {
   $('#list').replaceChildren(...st.colors.map((c, i) => {
     const li = document.createElement('li'); li.dataset.i = i;
     const nm = c.isCurrent ? 'currentColor' : c.hex + (c.alpha ? ` (${Math.round(parseInt(c.alpha, 16) / 2.55)}%)` : '');
-    const pk = t => { const cl = t === 'light' ? 'clar' : 'fosc'; return `<span class="pk"><span aria-hidden="true" title="Mode ${cl}">${t === 'light' ? '☀' : '☾'}</span><input type="color" data-f="${t}" value="${c[t]}" aria-label="Color mode ${cl} per a ${nm}"><input type="text" data-f="${t}" value="${c[t]}" maxlength="7" spellcheck="false" aria-label="Hex mode ${cl} per a ${nm}"></span>`; };
-    li.innerHTML = `<input type="checkbox" data-f="enabled" ${c.enabled ? 'checked' : ''} aria-label="Aplica el tema a ${nm}"><span class="sw ${c.isCurrent ? 'cur' : ''}" style="background:${c.hex}${c.alpha}" title="${nm}: ${c.count} ús"></span><span class="hx">${nm}</span><span aria-hidden="true">→</span>${pk('light')}${pk('dark')}`;
+    const pk = t => { const cl = t === 'light' ? 'clar' : 'fosc'; return `<span class="pk" title="Mode ${cl}">${t === 'light' ? I.sun : I.moon}<input type="color" data-f="${t}" value="${c[t]}" aria-label="Color mode ${cl} per a ${nm}"></span>`; };
+    li.innerHTML = `<input type="checkbox" data-f="enabled" ${c.enabled ? 'checked' : ''} aria-label="Aplica el tema a ${nm}"><span class="sw ${c.isCurrent ? 'cur' : ''}" style="background:${c.hex}${c.alpha}" title="${nm}: ${c.count} ús"></span><span class="to" aria-hidden="true">${I.arrow}</span>${pk('light')}${pk('dark')}`;
     return li;
   }));
 }
@@ -46,14 +52,7 @@ $('#list').addEventListener('input', e => {
   const t = e.target, f = t.dataset.f; if (!f) return;
   const li = t.closest('li'), c = st.colors[li.dataset.i];
   if (f === 'enabled') c.enabled = t.checked;
-  else {
-    let v = t.value.trim().toLowerCase();
-    if (t.type === 'text') {
-      if (/^#[0-9a-f]{3}$/.test(v)) v = '#' + [...v.slice(1)].map(x => x + x).join('');
-      const ok = /^#[0-9a-f]{6}$/.test(v); t.classList.toggle('bad', !ok); t.setAttribute('aria-invalid', String(!ok)); if (!ok) return;
-    }
-    c[f] = v; li.querySelectorAll(`[data-f="${f}"]`).forEach(x => { if (x !== t) x.value = v; });
-  }
+  else c[f] = t.value;
   update();
 });
 $('#reset').onclick = () => { st.colors.forEach(c => Object.assign(c, c.sug, { enabled: true })); renderColors(); update(); };

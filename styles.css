@@ -249,8 +249,8 @@ button.icon svg {
 #list li {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 8px;
+    gap: 8px;
+    padding: 8px;
     border-bottom: 1px solid var(--bd);
     flex-wrap: wrap;
 }
@@ -264,34 +264,44 @@ button.icon svg {
 .sw.cur {
     border-style: dashed;
 }
-.hx {
-    font:
-        12px ui-monospace,
-        monospace;
-    min-width: 64px;
+.i {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    display: block;
+}
+.to {
+    color: var(--mut);
+    display: inline-flex;
 }
 .pk {
     display: inline-flex;
     align-items: center;
-    gap: 3px;
+    gap: 6px;
+    padding: 3px 6px 3px 8px;
+    background: var(--pn);
+    border: 1px solid var(--bd);
+    border-radius: 6px;
+}
+.pk .i {
+    color: var(--mut);
 }
 input[type="color"] {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     padding: 0;
     border: 1px solid var(--bd);
     border-radius: 4px;
     background: none;
+    cursor: pointer;
 }
-.pk input[type="text"] {
-    width: 68px;
-    font:
-        12px ui-monospace,
-        monospace;
-    padding: 2px 4px;
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
 }
-.bad {
-    border-color: var(--er) !important;
+input[type="color"]::-webkit-color-swatch,
+input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: 3px;
 }
 .prev {
     flex: 1;
