@@ -14,7 +14,15 @@ Jo utilitzo aquesta eina principalment per generar gràfics amb Excalidraw (plot
 Una altra utilitat que té dins de Notion és poder generar icones de pàgines que canvien de color automàticament.
 
 ## Enllaç a la web
-[https://mapaor.github.io/svg-theme-converter](https://mapaor.github.io/svg-theme-converter)
+SVG Theme Converter Online: [https://mapaor.github.io/svg-theme-converter](https://mapaor.github.io/svg-theme-converter)
+
+## Roadmap
+Algunes coses que tinc pendents de millorar
+- [ ] Afegir més exmples
+- [ ] Millorar la UX dels warnings
+- [ ] Millorar la UI de l'editor quan està focus
+- [ ] Afegir highlighting al codi de l'editor i l'output
+- [ ] Fer una detecció de SVGs que ja tenen un mode fosc implementat (i fer que es mostrin els dos colors input a la columna central)
 
 ## Llicència
 MIT
