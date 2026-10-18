@@ -8,7 +8,7 @@ const ico = (d) => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="2
 const I = {
   sun: ico('<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>'),
   moon: ico('<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'),
-  arrow: ico('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>'),
+  moveR: ico('<path d="M18 8L22 12L18 16"/><path d="M2 12H22"/>'), // lucide move-right (entrada → sortida)
   chevR: ico('<path d="m9 18 6-6-6-6"/>'), // lucide chevron-right (plegat)
   chevD: ico('<path d="m6 9 6 6 6-6"/>'), // lucide chevron-down (desplegat)
 };
@@ -65,7 +65,7 @@ function renderColors() {
     const sw = c.varName
       ? { style: `background:linear-gradient(135deg,${c.light}${c.alpha} 50%,${c.dark}${aD} 50%)`, title: `${c.varName} · clar ${c.light}${c.alpha} · fosc ${c.dark}${aD} · ${c.count} ús` }
       : { style: `background:${c.hex}${c.alpha}`, title: `${nm}: ${c.count} ús` };
-    li.innerHTML = `<input type="checkbox" data-f="enabled" ${c.enabled ? 'checked' : ''} aria-label="Aplica el tema a ${nm}"><span class="sw ${c.isCurrent ? 'cur' : ''}" style="${sw.style}" title="${sw.title}"></span><span class="to" aria-hidden="true">${I.arrow}</span>${pk('light')}${pk('dark')}`;
+    li.innerHTML = `<input type="checkbox" data-f="enabled" ${c.enabled ? 'checked' : ''} aria-label="Aplica el tema a ${nm}"><span class="sw ${c.isCurrent ? 'cur' : ''}" style="${sw.style}" title="${sw.title}"></span><span class="to" aria-hidden="true">${I.moveR}</span>${pk('light')}${pk('dark')}`;
     return li;
   }));
 }
