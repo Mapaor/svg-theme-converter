@@ -180,7 +180,8 @@ button.icon svg {
     pointer-events: none;
 }
 #dirty,
-#msg {
+#msg,
+#msgSrc {
     color: var(--wa);
 }
 .seg {
@@ -436,7 +437,8 @@ input[type="color"]::-moz-color-swatch {
     padding: 4px 8px;
     border-bottom: 1px solid var(--bd);
 }
-#reparse {
+/* Copiar + reanalitzar: el missatge i la parella de botons s'empenyen cap a la dreta, junts. */
+#msgSrc {
     margin-left: auto;
 }
 [hidden] {

@@ -25,7 +25,14 @@
       <div class="bar">
         <div class="seg" role="group" aria-label="Vista de l'original"><button id="sCode" aria-pressed="false">Codi</button><button id="sImg" aria-pressed="true">Imatge</button></div>
         <div class="seg themeSeg" role="group" aria-label="Tema de la previsualització"><button data-t="light">☀ Clar</button><button data-t="dark">☾ Fosc</button></div>
-        <span id="dirty" hidden>editat, sense analitzar</span><button id="reparse" title="Ctrl+Enter">Reanalitza</button>
+        <span id="dirty" hidden>editat</span>
+        <span id="msgSrc" role="status"></span>
+        <button id="copySrc" class="icon" aria-label="Copia el codi de l'editor" title="Copia el codi de l'editor">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        </button>
+        <button id="reparse" class="icon" aria-label="Reanalitza" title="Reanalitza (Ctrl+Enter)" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m12 16 4-4-4-4"/><path d="M8 12h8"/></svg>
+        </button>
       </div>
     <div class="ed"><pre id="gutter" aria-hidden="true">1</pre><div class="code"><pre class="hl" aria-hidden="true"><code id="hlSrc"></code></pre><textarea id="src" spellcheck="false" wrap="off" aria-label="Codi SVG original"></textarea></div></div>
     <div id="prevSrc" class="prev" hidden><img id="imgSrc" alt="Previsualització de l'SVG original"></div>

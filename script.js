@@ -14,8 +14,11 @@ const I = {
 };
 const fill = (el, items) => { el.replaceChildren(...items.map(t => Object.assign(document.createElement('li'), { textContent: t }))); el.hidden = !items.length; };
 const showErr = m => { $('#err').textContent = m || ''; $('#err').hidden = !m; };
-const msg = t => { $('#msg').textContent = t; setTimeout(() => ($('#msg').textContent = ''), 2500); };
+/** Missatge temporal a la barra que es passi (per defecte, la del resultat). */
+const msg = (t, at = $('#msg')) => { at.textContent = t; setTimeout(() => { if (at.textContent === t) at.textContent = ''; }, 2500); };
 const gutter = () => { $('#gutter').textContent = Array.from({ length: src.value.split('\n').length }, (_, i) => i + 1).join('\n'); };
+/** L'editor té canvis pendents? El botó de reanalitzar només s'activa llavors (si no, queda apagat). */
+const setDirty = d => { $('#dirty').hidden = !d; $('#reparse').disabled = !d; };
 
 /* Codi acolorit: el textarea va a sobre amb el text transparent i la capa .hl del darrere pinta
    el codi. El desplaçament es fa amb un transform, així no depèn de l'alçada de scroll del textarea. */
@@ -32,7 +35,7 @@ const paint = (layer, ta) => {
 /** Càrrega d'un SVG nou: reinicia TOT l'estat dependent del document anterior. */
 function load(text, name) {
   Object.assign(st, { name, doc: null, colors: [], notes: [], san: [], out: '' });
-  src.value = text; gutter(); paint(hlSrc, src); $('#fileName').textContent = name + ' — clic o arrossega per substituir';
+  src.value = text; gutter(); paint(hlSrc, src); setDirty(false); $('#fileName').textContent = name + ' — clic o arrossega per substituir';
   $('#out').value = ''; paint(hlOut, $('#out')); setImg(null); previewSrc(null); renderColors(); renderWarns(); sync(); showErr(null);
   const samples = $('#samples');
   samples.value = [...samples.options].some(o => o.value === name) ? name : '';
@@ -52,7 +55,7 @@ function reparse(keep) {
   if (!a.colors.length) st.notes.push("No s'han detectat colors editables.");
   if (st.colors.some(c => c.isCurrent)) st.notes.push("currentColor es preserva (hereta la propietat color). La fila «currentColor» defineix el color base de l'SVG arrel" + (a.nested ? ", que hereten els SVG niats." : '.'));
   if (a.vars) st.notes.push(`${a.vars} referència(s) var() es preserven; només s'editen els colors definits directament (p. ex. --x: #fff).`);
-  showErr(null); $('#dirty').hidden = true; renderColors(); update();
+  showErr(null); setDirty(false); renderColors(); update();
 }
 
 function renderColors() {
@@ -152,11 +155,15 @@ $('#dl').onclick = () => {
 };
 
 // Editor
-src.addEventListener('input', () => { gutter(); paint(hlSrc, src); $('#dirty').hidden = false; });
+src.addEventListener('input', () => { gutter(); paint(hlSrc, src); setDirty(true); });
 src.addEventListener('scroll', () => { $('#gutter').scrollTop = src.scrollTop; syncScroll(hlSrc, src); });
 $('#out').addEventListener('scroll', () => syncScroll(hlOut, $('#out')));
-src.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') reparse(true); });
+src.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !$('#reparse').disabled) reparse(true); });
 $('#reparse').onclick = () => reparse(true);
+$('#copySrc').onclick = async () => {
+  try { await navigator.clipboard.writeText(src.value); msg('Copiat', $('#msgSrc')); }
+  catch { showErr("No s'ha pogut accedir al porta-retalls. Selecciona el codi i copia'l manualment."); src.focus(); src.select(); }
+};
 
 // Importació: fitxer, drag & drop, porta-retalls i exemples
 const readFile = async f => { try { load(await f.text(), f.name); } catch { showErr("No s'ha pogut llegir el fitxer."); } };
