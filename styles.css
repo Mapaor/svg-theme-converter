@@ -11,6 +11,8 @@
     --hl-attr: #953800;
     --hl-val: #116329;
     --hl-com: #6e7781;
+    --hl-kw: #cf222e;
+    --hl-str: #0a3069;
     color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -27,6 +29,8 @@
         --hl-attr: #ffa657;
         --hl-val: #7ee787;
         --hl-com: #8b949e;
+        --hl-kw: #ff7b72;
+        --hl-str: #a5d6ff;
     }
 }
 * {
@@ -272,6 +276,22 @@ button.icon svg {
 }
 .hl .av {
     color: var(--hl-val);
+}
+/* CSS de dins dels <style>: selectors, propietats, valors, @regles i cadenes */
+.hl .ct {
+    color: var(--hl-tag);
+}
+.hl .cp {
+    color: var(--hl-attr);
+}
+.hl .cv {
+    color: var(--hl-val);
+}
+.hl .ck {
+    color: var(--hl-kw);
+}
+.hl .cst {
+    color: var(--hl-str);
 }
 .hl .cm,
 .hl .cd {
