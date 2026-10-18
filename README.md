@@ -1,4 +1,4 @@
-# SVG Theme Converter
+# SVG Theme Editor
 Una eina senzilla principalment enfocada en fer un SVG "dark mode compatible", és a dir definir-li un mode fosc amb uns colors OKLCH oposats. Permet també canviar els colors del SVG, tant pel mode clar com pel mode fosc.
 
 Jo utilitzo aquesta eina principalment per generar gràfics amb Excalidraw (plots senzills d'apunts de classe) i després posar-los al Notion, i que es vegin bé tant si són en mode fosc com en mode clar. Per exemple que si en mode clar els eixos d'un plot són negres en mode fosc es facin blancs.
@@ -14,7 +14,7 @@ Jo utilitzo aquesta eina principalment per generar gràfics amb Excalidraw (plot
 Una altra utilitat que té dins de Notion és poder generar icones de pàgines que canvien de color automàticament.
 
 ## Enllaç a la web
-SVG Theme Converter Online: [https://mapaor.github.io/svg-theme-converter](https://mapaor.github.io/svg-theme-converter)
+SVG Theme Editor Online: [https://mapaor.github.io/svg-theme-editor](https://mapaor.github.io/svg-theme-editor)
 
 ## Roadmap
 Algunes coses que tinc pendents de millorar
