@@ -71,10 +71,13 @@ function cssHighlight(css) {
   let i = 0, out = '', depth = 0;
   while (i < css.length) {
     const start = i;
-    while (i < css.length) { // fins al proper delimitador estructural (a fora de cadenes i comentaris)
+    let paren = 0;
+    while (i < css.length) { // fins al proper delimitador estructural (a fora de cadenes, comentaris i parèntesis)
       const c = css[i];
-      if (c === '{' || c === '}' || c === ';') break;
-      if (c === '/' && css[i + 1] === '*') { const j = css.indexOf('*/', i + 2); i = j < 0 ? css.length : j + 2; }
+      if (!paren && (c === '{' || c === '}' || c === ';')) break;
+      if (c === '(') { paren++; i++; }
+      else if (c === ')') { paren = Math.max(0, paren - 1); i++; }
+      else if (c === '/' && css[i + 1] === '*') { const j = css.indexOf('*/', i + 2); i = j < 0 ? css.length : j + 2; }
       else if (c === '"' || c === "'") { const j = css.indexOf(c, i + 1); i = j < 0 ? css.length : j + 1; }
       else i++;
     }
